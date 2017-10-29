@@ -60,7 +60,7 @@ module.exports = {
                 ident: 'postcss',
                 plugins: (loader) => [
                   require('autoprefixer')(),
-                  require('cssnano')()
+                  // require('cssnano')()
                 ]
               }
             },

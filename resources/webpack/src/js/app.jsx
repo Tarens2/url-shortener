@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 import {Button, Col, Container, Form, FormFeedback, FormGroup, Input, Label, Row} from 'reactstrap';
 import axios from 'axios';
+import Preloader from './Components/Preloader/Preloader.jsx';
+import Response from './Components/Response/Response.jsx';
 
 class Home extends Component {
 
@@ -9,14 +11,14 @@ class Home extends Component {
     super();
     this.state = {
       isUrlValid: true,
-      url: ''
+      url: '',
+      preloading: false
     }
   }
 
   render() {
     return (<Container>
       <Row>
-        <Col/>
         <Col>
           <Form onSubmit={this.onSubmitHandler.bind(this)}>
             <h1>Url Shortener</h1>
@@ -28,9 +30,9 @@ class Home extends Component {
             <FormGroup>
               <Button color="primary">Get short url</Button>
             </FormGroup>
+            <Preloader style={{display: this.state.preloading? 'block': 'none'}}/>
           </Form>
         </Col>
-        <Col/>
       </Row>
     </Container>);
   }
@@ -40,20 +42,20 @@ class Home extends Component {
   }
 
   onChangeHandler(event) {
-
     this.setState({url: event.target.value, isUrlValid: this.checkUrl(event.target.value)});
   }
 
   onSubmitHandler(event) {
     event.preventDefault();
-
-    if(this.state.url && this.state.isUrlValid) {
+    if(this.state.url && this.state.isUrlValid && !this.state.preloading) {
+      this.state.preloading = true;
       axios.post(window.location.origin + '/shortener', {
         url: this.state.url
       }).then((response) => {
-        console.log(this);
-        debugger;
-      })
+        this.state.preloading = false;
+      }).catch((err) => {
+        this.state.preloading = false;
+      });
     }
   }
 }
