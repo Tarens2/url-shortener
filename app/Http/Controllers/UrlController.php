@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Url;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class UrlController extends Controller
 {
@@ -23,6 +24,17 @@ class UrlController extends Controller
         }
     }
 
+    function redirectUrl($url_shorted)
+    {
+        $url = Url::where('url_shorted', $url_shorted)->first();
+
+        if(count($url) == 0) {
+            return redirect('/');
+        } else {
+            return redirect()->away($url->url);
+        }
+    }
+
     protected function convertById($id)
     {
         $length = strlen(self::$chars);
@@ -34,4 +46,6 @@ class UrlController extends Controller
         $code = self::$chars[intval($id)] . $code;
         return $code;
     }
+
+
 }

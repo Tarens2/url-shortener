@@ -3,7 +3,6 @@ import {render} from 'react-dom';
 import {Button, Col, Container, Form, FormFeedback, FormGroup, Input, Label, Row} from 'reactstrap';
 import axios from 'axios';
 import Preloader from './Components/Preloader/Preloader.jsx';
-import Response from './Components/Response/Response.jsx';
 
 class Home extends Component {
 
@@ -12,7 +11,11 @@ class Home extends Component {
     this.state = {
       isUrlValid: true,
       url: '',
-      preloading: false
+      preloading: false,
+      response: {
+        url: '',
+        urlShorted: ''
+      }
     }
   }
 
@@ -21,8 +24,8 @@ class Home extends Component {
       <Row>
         <Col>
           <Form onSubmit={this.onSubmitHandler.bind(this)}>
-            <h1>Url Shortener</h1>
             <FormGroup>
+              <h1>Url Shortener</h1>
               <Label>Insert your url</Label>
               <Input ref="urlInput" valid={this.state.isUrlValid} onInput={this.onChangeHandler.bind(this)}/>
               <FormFeedback style={{display: !this.state.isUrlValid ? 'block' : 'none'}}>Url uncorrected</FormFeedback>
@@ -30,7 +33,7 @@ class Home extends Component {
             <FormGroup>
               <Button color="primary">Get short url</Button>
             </FormGroup>
-            <Preloader style={{display: this.state.preloading? 'block': 'none'}}/>
+            <Preloader style={{display: this.state.preloading ? 'block' : 'none'}}/>
           </Form>
         </Col>
       </Row>
@@ -47,7 +50,7 @@ class Home extends Component {
 
   onSubmitHandler(event) {
     event.preventDefault();
-    if(this.state.url && this.state.isUrlValid && !this.state.preloading) {
+    if (this.state.url && this.state.isUrlValid && !this.state.preloading) {
       this.state.preloading = true;
       axios.post(window.location.origin + '/shortener', {
         url: this.state.url
@@ -60,10 +63,4 @@ class Home extends Component {
   }
 }
 
-render(
-  <Home/>,
-  document
-    .getElementById(
-      'app'
-    ))
-;
+render(<Home/>, document.getElementById('app'));

@@ -16,3 +16,4 @@ Route::get('/', function () {
 });
 
 Route::post('/shortener', 'UrlController@addUrl');
+Route::get('/{url_shorted}', 'UrlController@redirectUrl');
