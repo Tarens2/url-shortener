@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
-import {Button, Col, Container, Form, FormFeedback, FormGroup, Input, Label, Row} from 'reactstrap';
+import {Alert, Button, Col, Container, Form, FormFeedback, FormGroup, Input, Label, Row} from 'reactstrap';
 import axios from 'axios';
 import Preloader from './Components/Preloader/Preloader.jsx';
 
@@ -12,17 +12,34 @@ class Home extends Component {
       isUrlValid: true,
       url: '',
       preloading: false,
-      response: {
-        url: '',
-        urlShorted: ''
-      }
+      responses: []
     }
+  }
+
+  componentWillMount() {
+    this.setState({
+      responses: localStorage.getItem('urls') ? JSON.parse(localStorage.getItem('urls')) : []
+    })
+  }
+
+  mappingUlrs() {
+    return this.state.responses.map((item, i) =>
+      (
+        <div key={i}>
+          <p>
+            {item.url} - shortened to <b>{window.location.origin + '/' + item.url_shorted}</b>
+          </p>
+          {i === this.state.responses.length - 1 ? '' : <hr/>}
+        </div>
+      )
+    )
   }
 
   render() {
     return (<Container>
       <Row>
-        <Col>
+        <Col xs="12" sm="12" md="3"/>
+        <Col xs="12" sm="12" md="6">
           <Form onSubmit={this.onSubmitHandler.bind(this)}>
             <FormGroup>
               <h1>Url Shortener</h1>
@@ -31,14 +48,31 @@ class Home extends Component {
               <FormFeedback style={{display: !this.state.isUrlValid ? 'block' : 'none'}}>Url uncorrected</FormFeedback>
             </FormGroup>
             <FormGroup>
-              <Button color="primary">Get short url</Button>
+              <Button color="primary">Shortening</Button>
             </FormGroup>
             <Preloader style={{display: this.state.preloading ? 'block' : 'none'}}/>
           </Form>
         </Col>
+        <Col xs="12" sm="12" md="3"/>
+      </Row>
+      <Row>
+        <Col>
+          <Alert color="danger" style={{display: this.state.error ? 'block' : 'none'}}>
+            <h4 className="alert-heading">Oops, Error</h4>
+          </Alert>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Alert color="success" style={{display: this.state.responses.length ? 'block' : 'none'}}>
+            <h4 className="alert-heading">Shortened urls</h4>
+            {this.mappingUlrs()}
+          </Alert>
+        </Col>
       </Row>
     </Container>);
   }
+
 
   checkUrl(url) {
     return !!url.match(/^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/i);
@@ -52,13 +86,28 @@ class Home extends Component {
     event.preventDefault();
     if (this.state.url && this.state.isUrlValid && !this.state.preloading) {
       this.state.preloading = true;
+
       axios.post(window.location.origin + '/shortener', {
         url: this.state.url
       }).then((response) => {
         this.state.preloading = false;
+        this.addUrl(response.data.url);
+        this.state.error = false;
       }).catch((err) => {
+        this.state.error = true;
         this.state.preloading = false;
       });
+    }
+  }
+
+  addUrl(url) {
+    let founded = this.state.responses.find(item => url.id == item.id);
+    if (!founded) {
+      this.state.responses.push(url);
+      this.setState({
+        responses: this.state.responses
+      });
+      localStorage.setItem('urls', JSON.stringify(this.state.responses));
     }
   }
 }

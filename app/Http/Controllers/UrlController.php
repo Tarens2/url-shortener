@@ -18,9 +18,9 @@ class UrlController extends Controller
             $newUrl->save();
             $urlShorted = $this->convertById($newUrl->id);
             $newUrl->update(['url_shorted' => $urlShorted]);
-            return response()->json(['url_shorted' => $urlShorted, 'url' => $reqUrl]);
+            return response()->json(['url' => $newUrl]);
         } else {
-            return response()->json(['url_shorted' => $url->url_shorted, 'url' => $reqUrl]);
+            return response()->json(['url' => $url]);
         }
     }
 
