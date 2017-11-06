@@ -36,7 +36,7 @@ class Home extends Component {
   }
 
   render() {
-    return (<Container>
+    return (<Container style={{paddingTop: 40}}>
       <Row>
         <Col xs="12" sm="12" md="3"/>
         <Col xs="12" sm="12" md="6">
@@ -85,17 +85,22 @@ class Home extends Component {
   onSubmitHandler(event) {
     event.preventDefault();
     if (this.state.url && this.state.isUrlValid && !this.state.preloading) {
-      this.state.preloading = true;
-
+      this.setState({
+        preloading: true
+      });
       axios.post(window.location.origin + '/shortener', {
         url: this.state.url
       }).then((response) => {
-        this.state.preloading = false;
+        this.setState({
+          preloading: false,
+          error: false
+        });
         this.addUrl(response.data.url);
-        this.state.error = false;
       }).catch((err) => {
-        this.state.error = true;
-        this.state.preloading = false;
+        this.setState({
+          error: true,
+          preloading: false
+        });
       });
     }
   }
@@ -103,9 +108,10 @@ class Home extends Component {
   addUrl(url) {
     let founded = this.state.responses.find(item => url.id == item.id);
     if (!founded) {
-      this.state.responses.push(url);
+      let responses = this.state.responses;
+      responses.push(url);
       this.setState({
-        responses: this.state.responses
+        responses
       });
       localStorage.setItem('urls', JSON.stringify(this.state.responses));
     }
