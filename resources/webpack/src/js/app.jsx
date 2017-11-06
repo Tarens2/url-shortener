@@ -106,7 +106,7 @@ class Home extends Component {
   }
 
   addUrl(url) {
-    let founded = this.state.responses.find(item => url.id == item.id);
+    let founded = this.state.responses.find(item => url.url == item.url);
     if (!founded) {
       let responses = this.state.responses;
       responses.push(url);

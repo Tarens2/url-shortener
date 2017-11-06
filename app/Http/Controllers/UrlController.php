@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 class UrlController extends Controller
 {
     protected static $chars = "123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ";
+
     function addUrl(Request $request)
     {
         $reqUrl = $request->input('url');
@@ -31,6 +32,8 @@ class UrlController extends Controller
         if(count($url) == 0) {
             return redirect('/');
         } else {
+            $url->counter++;
+            $url->save();
             return redirect()->away($url->url);
         }
     }
