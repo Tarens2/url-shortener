@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('CheckInfo:deleting')->everyMinute();
+        $schedule->command('CheckInfo:deleting')->daily();
     }
 
     /**
@@ -38,7 +38,6 @@ class Kernel extends ConsoleKernel
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
-
         require base_path('routes/console.php');
     }
 

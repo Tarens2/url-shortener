@@ -27,7 +27,7 @@ class Home extends Component {
       (
         <div key={i}>
           <p>
-            {item.url} - shortened to <b>{window.location.origin + '/' + item.url_shorted}</b>
+            {item.url} - shortened to <a href={window.location.origin + '/' + item.url_shorted}><b>{}</b></a>
           </p>
           {i === this.state.responses.length - 1 ? '' : <hr/>}
         </div>
